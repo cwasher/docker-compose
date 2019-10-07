@@ -11,5 +11,15 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
+  cups:
+    container_name:cups
+    image: chuckcharlie/cups-avahi-airprint
+    environment:
+      - CUPSADMIN=${CUPSADMIN}
+      - CUPSPASSWORD=${CUPSPASSWORD}
+    volumes:
+      - cups_data:/services
+      - cups_data:/config
 volumes:
   portainer_data:
+  cups_data:
