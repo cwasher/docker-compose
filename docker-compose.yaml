@@ -1,22 +1,5 @@
 version: "3"
 services:
-  traefik:
-    container_name: traefik
-    image: traefik:alpine
-    restart: always
-    networks:
-      - srv
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - /opt/traefik/traefik.toml:/traefik.toml
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /opt/traefik/acme.json:/acme.json
-    labels:
-      - traefik.enable=true
-      - traefik.port=8080
-      - traefik.frontend.rule=Host:traefik.${TLDDOMAIN}
   portainer:
     container_name: portainer
     image: portainer/portainer
@@ -28,44 +11,5 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
-    labels:
-      - traefik.enable=true
-      - traefik.frontend.rule=Host:portainer.${TLDDOMAIN}
-  bookstack:
-    image: linuxserver/bookstack
-    container_name: bookstack
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - DB_HOST=bookstack_db
-      - DB_USER=bookstack
-      - DB_PASS=${BookStackDBPassword}
-      - DB_DATABASE=bookstackapp
-    volumes:
-      - path to data:/config
-    ports:
-      - 6875:80
-    restart: unless-stopped
-    depends_on:
-      - bookstack_db
-    labels:
-      - traefik.enable=true
-      - traefik.frontend.rule=Host:bookstack.${TLDDOMAIN}
-  bookstack_db:
-    image: linuxserver/mariadb
-    container_name: bookstack_db
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - MYSQL_ROOT_PASSWORD=${BookStackDBPassword}
-      - TZ=America/Chicago
-      - MYSQL_DATABASE=bookstackapp
-      - MYSQL_USER=bookstack
-      - MYSQL_PASSWORD=${BookStackDBPassword}
-    volumes:
-      - path to data:/config
-    restart: unless-stopped
 volumes:
   portainer_data:
- networks:
-   srv:
