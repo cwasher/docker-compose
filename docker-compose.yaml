@@ -12,7 +12,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
   cups:
-    container_name:cups
+    container_name: cups
     image: chuckcharlie/cups-avahi-airprint
     environment:
       - CUPSADMIN=${CUPSADMIN}
