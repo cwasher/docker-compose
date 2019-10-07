@@ -20,6 +20,7 @@ services:
     volumes:
       - cups_data:/services
       - cups_data:/config
+    network_mode: "host"
 volumes:
   portainer_data:
   cups_data:
