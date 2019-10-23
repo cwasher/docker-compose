@@ -1,26 +1,126 @@
 version: "3"
 services:
+  traefik:
+    container_name: traefik
+    image: traefik:v1.7.16
+    hostname: traefik
+    restart: always
+    domainname: ${DOMAINNAME}
+    networks:
+      - default
+      - traefik_proxy
+    ports:
+      - 80:80
+      - 443:443
+      - 9090:8080
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - CF_API_EMAIL=${CLOUDFLARE_EMAIL}
+      - CF_API_KEY=${CLOUDFLARE_API_KEY}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=traefik"
+      - "traefik.frontend.rule=Host:traefik.${DOMAINNAME}"  
+      - "traefik.port=8080"
+      - "traefik.docker.network=traefik_proxy"
+      - "traefik.frontend.headers.SSLRedirect=true"
+      - "traefik.frontend.headers.STSSeconds=315360000"
+      - "traefik.frontend.headers.browserXSSFilter=true"
+      - "traefik.frontend.headers.contentTypeNosniff=true"
+      - "traefik.frontend.headers.forceSTSHeader=true"
+      - "traefik.frontend.headers.SSLHost=example.com"
+      - "traefik.frontend.headers.STSIncludeSubdomains=true"
+      - "traefik.frontend.headers.STSPreload=true"
+      - "traefik.frontend.headers.frameDeny=true"
+      - "traefik.frontend.auth.basic.users=${HTTP_USERNAME}:${HTTP_PASSWORD}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${DOCKERCONFDIR}/traefik:/etc/traefik
+      - ${DOCKERSHAREDDIR}:/shared
   portainer:
     container_name: portainer
+    hostname: portainer
     image: portainer/portainer
     command: -H unix:///var/run/docker.sock
     restart: always
+    networks:
+      - traefik_proxy
     ports:
       - 9000:9000
       - 8000:8000
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
-  cups:
-    container_name: cups
-    image: chuckcharlie/cups-avahi-airprint
+      - ${DOCKERCONFDIR}/portainer:/data
+      - ${DOCKERSHAREDDIR}:/shared
+    labels:
+      traefik.enable: "true"
+      traefik.backend: portainer
+      traefik.protocol: http
+      traefik.port: 9000
+      traefik.frontend.rule: Host:portainer.${DOMAINNAME}
+      traefik.frontend.headers.SSLHost: portainer.${DOMAINNAME}
+      traefik.docker.network: traefik_proxy
+      traefik.frontend.passHostHeader: "true"
+      traefik.frontend.headers.SSLForceHost: "true"
+      traefik.frontend.headers.SSLRedirect: "true"
+      traefik.frontend.headers.browserXSSFilter: "true"
+      traefik.frontend.headers.contentTypeNosniff: "true"
+      traefik.frontend.headers.forceSTSHeader: "true"
+      traefik.frontend.headers.STSSeconds: 315360000
+      traefik.frontend.headers.STSIncludeSubdomains: "true"
+      traefik.frontend.headers.STSPreload: "true"
+      traefik.frontend.headers.customResponseHeaders: X-Robots-Tag:noindex,nofollow,nosnippet,noarchive,notranslate,noimageindex
+      traefik.frontend.headers.frameDeny: "true"
+      traefik.frontend.headers.customFrameOptionsValue: 'allow-from https:${DOMAINNAME}'
+  unifi-controller:
+    container_name: unifi-controller
+    hostname: unifi
+    image: linuxserver/unifi-controller:latest
+    restart: always
     environment:
-      - CUPSADMIN=${CUPSADMIN}
-      - CUPSPASSWORD=${CUPSPASSWORD}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - MEM_LIMIT=${UNIFI_MEMLIMIT_1024}
     volumes:
-      - cups_data:/services
-      - cups_data:/config
-    network_mode: "host"
-volumes:
-  portainer_data:
-  cups_data:
+      - ${DOCKERCONFDIR}/unifi:/config
+    networks:
+      - traefik_proxy
+    ports:
+      - 3478:3478/udp
+      - 10001:10001/udp
+      - 8080:8080
+      - 8081:8081
+      - 8443:8443
+      - 8843:8843
+      - 8880:8880
+      - 6789:6789
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tags=frontend"
+      - "traefik.frontend.passHostHeader=true"
+      - "traefik.admin.backend=unifi"
+      - "traefik.admin.frontend.rule=Host:unifi.${DOMAINNAME}"
+      - "traefik.admin.port=8443"
+      - "traefik.admin.protocol=https"
+      - "traefik.frontend.headers.SSLRedirect=true"
+      - "traefik.frontend.headers.STSSeconds=315360000"
+      - "traefik.frontend.headers.browserXSSFilter=true"
+      - "traefik.frontend.headers.contentTypeNosniff=true"
+      - "traefik.frontend.headers.forceSTSHeader=true"
+      - "traefik.frontend.headers.SSLHost=example.com"
+      - "traefik.frontend.headers.STSIncludeSubdomains=true"
+      - "traefik.frontend.headers.STSPreload=true"
+      - "traefik.frontend.headers.frameDeny=true"
+networks:
+  traefik_proxy:
+    external:
+      name: traefik_proxy
+  default:
+    driver: bridge
