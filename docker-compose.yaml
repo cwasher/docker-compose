@@ -91,7 +91,6 @@ services:
     volumes:
       - ${DOCKERCONFDIR}/unifi:/unifi
     networks:
-      - default
       - traefik_proxy
     ports:
       - 3478:3478/udp
@@ -129,7 +128,6 @@ services:
       - WEBSOCKET_ENABLED=true
       - SIGNUPS_ALLOWED=true
     networks:
-      - default
       - traefik_proxy
     ports:
       - 9292:80
