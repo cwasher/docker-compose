@@ -81,15 +81,16 @@ services:
   unifi-controller:
     container_name: unifi-controller
     hostname: unifi
-    image: linuxserver/unifi-controller:latest
+    image: jacobalberty/unifi:latest
     restart: always
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
+      - UNIFI_UID=${PUID}
+      - UNIFI_GID=${PGID}
+      - RUNAS_UID0=false
       - TZ=${TZ}
-      - MEM_LIMIT=${UNIFI_MEMLIMIT_1024}
+      - JVM_MAX_THREAD_STACK_SIZE=
     volumes:
-      - ${DOCKERCONFDIR}/unifi:/config
+      - ${DOCKERCONFDIR}/unifi:/unifi
     networks:
       - traefik_proxy
     ports:
