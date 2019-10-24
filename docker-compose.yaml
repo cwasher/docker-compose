@@ -91,7 +91,7 @@ services:
     volumes:
       - ${DOCKERCONFDIR}/unifi:/unifi
     networks:
-      - traefik_proxy
+      - default
     ports:
       - 3478:3478/udp
       - 10001:10001/udp
@@ -101,23 +101,6 @@ services:
       - 8843:8843
       - 8880:8880
       - 6789:6789
-    labels:
-      traefik.enable: "true"
-      traefik.tags: "frontend"
-      traefik.frontend.passHostHeader: "true"
-      traefik.admin.backend: "unifi"
-      traefik.admin.frontend.rule: "Host:unifi.${DOMAINNAME}"
-      traefik.admin.port: "8443"
-      traefik.admin.protocol: "https"
-      traefik.frontend.headers.SSLRedirect: "true"
-      traefik.frontend.headers.STSSeconds: "315360000"
-      traefik.frontend.headers.browserXSSFilter: "true"
-      traefik.frontend.headers.contentTypeNosniff: "true"
-      traefik.frontend.headers.forceSTSHeader: "true"
-      traefik.frontend.headers.SSLHost: "${DOMAINNAME}"
-      traefik.frontend.headers.STSIncludeSubdomains: "true"
-      traefik.frontend.headers.STSPreload: "true"
-      traefik.frontend.headers.frameDeny: "true"
 networks:
   traefik_proxy:
     external:
