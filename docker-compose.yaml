@@ -138,10 +138,10 @@ services:
     - ${DOCKERSHAREDDIR}:/shared
     labels:
       traefik.enable: "true"
-      traefik.backend: "bitwarden"
       traefik.web.frontend.rule: "Host:bitwarden.${DOMAINNAME}"
       traefik.web.port: "80"
       traefik.hub.frontend.rule: "Host:bitwarden.${DOMAINNAME}Path:/notifications/hub"
+      traefik.hub.protocol: "ws"
       traefik.hub.port: "3012"
       traefik.docker.network: "traefik_proxy"
       traefik.frontend.headers.SSLRedirect: "true"
