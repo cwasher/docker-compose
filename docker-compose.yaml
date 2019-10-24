@@ -127,6 +127,8 @@ services:
       - TZ=${TZ}
       - WEBSOCKET_ENABLED=true
       - SIGNUPS_ALLOWED=true
+    networks:
+      - traefik_proxy
     ports:
       - 9292:80
       - 3012:3012
