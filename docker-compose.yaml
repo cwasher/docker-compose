@@ -88,7 +88,6 @@ services:
       - UNIFI_GID=${PGID}
       - RUNAS_UID0=false
       - TZ=${TZ}
-      - JVM_MAX_THREAD_STACK_SIZE=
     volumes:
       - ${DOCKERCONFDIR}/unifi:/unifi
     networks:
