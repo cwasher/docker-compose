@@ -106,6 +106,7 @@ services:
       traefik.frontend.rule: "Host:unifi.${DOMAINNAME}"
       traefik.port: "8443"
       traefik.protocol: "https"
+      traefik.frontend.passHostHeader: "true"
       traefik.docker.network: "traefik_proxy"
       traefik.frontend.headers.SSLRedirect: "true"
       traefik.frontend.headers.STSSeconds: "315360000"
