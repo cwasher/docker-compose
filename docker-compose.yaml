@@ -103,9 +103,7 @@ services:
       - 6789:6789
     labels:
       traefik.enable: "true"
-      traefik.backend: "unifi"
       traefik.frontend.rule: "Host:unifi.${DOMAINNAME}"
-      traefik.frontend.headers.SSLHost: "unifi.${DOMAINNAME}"
       traefik.port: "8443"
       traefik.protocol: "https"
       traefik.docker.network: "traefik_proxy"
