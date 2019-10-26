@@ -136,6 +136,40 @@ services:
       traefik.frontend.headers.STSIncludeSubdomains: "true"
       traefik.frontend.headers.STSPreload: "true"
       traefik.frontend.headers.frameDeny: "true"
+  radarr:
+    container_name: radarr
+    hostname: radarr
+    image: linuxserver/radarr
+    restart: unless-stopped
+    environment:
+    - PGID=${PGID}
+    - PUID=${PUID}
+    - TZ=${TZ}
+    networks:
+      - traefik_proxy
+    ports:
+    - 7878:7878
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - ${DOCKERCONFDIR}/radarr:/config
+    - ${DOCKERSHAREDDIR}:/shared
+    - ${MEDIADIR_DOWNLOAD}:/data
+    - ${MEDIADIR_DOWNLOAD}:/downloads
+    - ${MEDIADIR_MOVIES}:/movies
+    labels:
+      traefik.enable: "true"
+      traefik.frontend.rule: "Host:radarr.${DOMAINNAME}"
+      traefik.port: "7878"
+      traefik.docker.network: "traefik_proxy"
+      traefik.frontend.headers.SSLRedirect: "true"
+      traefik.frontend.headers.STSSeconds: "315360000"
+      traefik.frontend.headers.browserXSSFilter: "true"
+      traefik.frontend.headers.contentTypeNosniff: "true"
+      traefik.frontend.headers.forceSTSHeader: "true"
+      traefik.frontend.headers.SSLHost: "${DOMAINNAME}"
+      traefik.frontend.headers.STSIncludeSubdomains: "true"
+      traefik.frontend.headers.STSPreload: "true"
+      traefik.frontend.headers.frameDeny: "true"
 networks:
   traefik_proxy:
     external:
