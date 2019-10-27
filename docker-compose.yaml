@@ -289,6 +289,7 @@ services:
     - ${MEDIADIR_DOWNLOAD}:/downloads
     labels:
       traefik.enable: "true"
+      traefik.backend: "hydra"
       traefik.frontend.rule: "Host:hydra.${DOMAINNAME}"
       traefik.port: "5076"
       traefik.docker.network: "traefik_proxy"
