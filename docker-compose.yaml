@@ -176,6 +176,8 @@ services:
     image: linuxserver/sonarr
     restart: unless-stopped
     environment:
+    - PGID=${PGID}
+    - PUID=${PUID}
     - TZ=${TZ}
     networks:
       - traefik_proxy
