@@ -188,7 +188,7 @@ services:
     - ${DOCKERCONFDIR}/sonarr:/config
     - ${DOCKERSHAREDDIR}:/shared
     - ${MEDIADIR_DOWNLOAD}:/data/downloads
-    - ${MEDIADIR_TV}:/data/tv
+    - /mnt/mediatest:/data/tv
     labels:
       traefik.enable: "true"
       traefik.frontend.rule: "Host:sonarr.${DOMAINNAME}"
