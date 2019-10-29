@@ -187,7 +187,6 @@ services:
     - /etc/localtime:/etc/localtime:ro
     - ${DOCKERCONFDIR}/sonarr:/config
     - ${DOCKERSHAREDDIR}:/shared
-    - ${MEDIADIR_DOWNLOAD}:/data
     - ${MEDIADIR_DOWNLOAD}:/downloads
     - ${MEDIADIR_TV}:/tv
     labels:
