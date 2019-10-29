@@ -187,8 +187,8 @@ services:
     - /etc/localtime:/etc/localtime:ro
     - ${DOCKERCONFDIR}/sonarr:/config
     - ${DOCKERSHAREDDIR}:/shared
-    - ${MEDIADIR_DOWNLOAD}:/downloads
-    - ${MEDIADIR_TV}:/tv
+    - ${MEDIADIR_DOWNLOAD}:/data/downloads
+    - ${MEDIADIR_TV}:/data/tv
     labels:
       traefik.enable: "true"
       traefik.frontend.rule: "Host:sonarr.${DOMAINNAME}"
