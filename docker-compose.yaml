@@ -220,7 +220,7 @@ services:
     - /etc/localtime:/etc/localtime:ro
     - ${DOCKERCONFDIR}/nzbget:/config
     - ${DOCKERSHAREDDIR}:/shared
-    - ${MEDIADIR_DOWNLOAD}:/downloads
+    - ${MEDIADIR_DOWNLOAD}:/data/downloads
     labels:
       traefik.enable: "true"
       traefik.frontend.rule: "Host:nzbget.${DOMAINNAME}"
