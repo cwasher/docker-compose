@@ -153,7 +153,6 @@ services:
     - /etc/localtime:/etc/localtime:ro
     - ${DOCKERCONFDIR}/radarr:/config
     - ${DOCKERSHAREDDIR}:/shared
-    - ${MEDIADIR_DOWNLOAD}:/data
     - ${MEDIADIR_DOWNLOAD}:/downloads
     - ${MEDIADIR_MOVIES}:/movies
     labels:
@@ -187,8 +186,8 @@ services:
     - /etc/localtime:/etc/localtime:ro
     - ${DOCKERCONFDIR}/sonarr:/config
     - ${DOCKERSHAREDDIR}:/shared
-    - ${MEDIADIR_DOWNLOAD}:/data/downloads
-    - /mnt/mediatest:/data/tv
+    - ${MEDIADIR_DOWNLOAD}:/downloads
+    - ${MEDIADIR_TV}:/tv
     labels:
       traefik.enable: "true"
       traefik.frontend.rule: "Host:sonarr.${DOMAINNAME}"
@@ -220,7 +219,7 @@ services:
     - /etc/localtime:/etc/localtime:ro
     - ${DOCKERCONFDIR}/nzbget:/config
     - ${DOCKERSHAREDDIR}:/shared
-    - ${MEDIADIR_DOWNLOAD}:/data/downloads
+    - ${MEDIADIR_DOWNLOAD}:/downloads
     labels:
       traefik.enable: "true"
       traefik.frontend.rule: "Host:nzbget.${DOMAINNAME}"
