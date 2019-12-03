@@ -310,6 +310,29 @@ services:
       traefik.frontend.headers.STSIncludeSubdomains: "true"
       traefik.frontend.headers.STSPreload: "true"
       traefik.frontend.headers.frameDeny: "true"
+  unifi-controller:
+    container_name: unifi-controller
+    hostname: unifi
+    image: jacobalberty/unifi:latest
+    restart: always
+    environment:
+      - UNIFI_UID=${PUID}
+      - UNIFI_GID=${PGID}
+      - RUNAS_UID0=false
+      - TZ=${TZ}
+    volumes:
+      - ${DOCKERCONFDIR}/unifi:/unifi
+    networks:
+      - default
+    ports:
+      - 3478:3478/udp
+      - 10001:10001/udp
+      - 8080:8080
+      - 8081:8081
+      - 8443:8443
+      - 8843:8843
+      - 8880:8880
+      - 6789:6789
 networks:
   traefik_proxy:
     external:
