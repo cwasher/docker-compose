@@ -321,7 +321,7 @@ services:
       - RUNAS_UID0=false
       - TZ=${TZ}
     volumes:
-      - ${DOCKERCONFDIR}/unifi:/unifi
+      - ${DOCKERCONFLOCAL}/unifi:/unifi
     networks:
       - default
     ports:
