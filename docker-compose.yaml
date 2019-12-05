@@ -113,6 +113,7 @@ services:
       traefik.frontend.headers.STSIncludeSubdomains: "true"
       traefik.frontend.headers.STSPreload: "true"
       traefik.frontend.headers.frameDeny: "true"
+      com.centurylinklabs.watchtower.enable: "true"
   radarr:
     container_name: radarr
     hostname: radarr
@@ -146,6 +147,7 @@ services:
       traefik.frontend.headers.STSIncludeSubdomains: "true"
       traefik.frontend.headers.STSPreload: "true"
       traefik.frontend.headers.frameDeny: "true"
+      com.centurylinklabs.watchtower.enable: "true"
   sonarr:
     container_name: sonarr
     hostname: sonarr
@@ -179,6 +181,7 @@ services:
       traefik.frontend.headers.STSIncludeSubdomains: "true"
       traefik.frontend.headers.STSPreload: "true"
       traefik.frontend.headers.frameDeny: "true"
+      com.centurylinklabs.watchtower.enable: "true"
   lidarr:
     container_name: lidarr
     hostname: lidarr
@@ -212,6 +215,7 @@ services:
       traefik.frontend.headers.STSIncludeSubdomains: "true"
       traefik.frontend.headers.STSPreload: "true"
       traefik.frontend.headers.frameDeny: "true"
+      com.centurylinklabs.watchtower.enable: "true"
   nzbget:
     container_name: nzbget
     hostname: nzbget
@@ -244,6 +248,7 @@ services:
       traefik.frontend.headers.STSIncludeSubdomains: "true"
       traefik.frontend.headers.STSPreload: "true"
       traefik.frontend.headers.frameDeny: "true"
+      com.centurylinklabs.watchtower.enable: "true"
   emby:
     container_name: emby
     hostname: emby
@@ -277,6 +282,7 @@ services:
       traefik.frontend.headers.STSIncludeSubdomains: "true"
       traefik.frontend.headers.STSPreload: "true"
       traefik.frontend.headers.frameDeny: "true"
+      com.centurylinklabs.watchtower.enable: "true"
   nzbhydra2:
     container_name: nzbhydra2
     hostname: nzbhydra2
@@ -310,6 +316,7 @@ services:
       traefik.frontend.headers.STSIncludeSubdomains: "true"
       traefik.frontend.headers.STSPreload: "true"
       traefik.frontend.headers.frameDeny: "true"
+      com.centurylinklabs.watchtower.enable: "true"
   unifi-controller:
     container_name: unifi-controller
     hostname: unifi
@@ -349,6 +356,13 @@ services:
       traefik.frontend.headers.STSIncludeSubdomains: "true"
       traefik.frontend.headers.STSPreload: "true"
       traefik.frontend.headers.frameDeny: "true"
+  watchtower:
+    container_name: watchtower
+    image: v2tec/watchtower
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --schedule "0 0 4 * * *" --cleanup --label-enable
 networks:
   traefik_proxy:
     external:
