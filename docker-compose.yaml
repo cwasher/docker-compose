@@ -317,6 +317,41 @@ services:
       traefik.frontend.headers.STSPreload: "true"
       traefik.frontend.headers.frameDeny: "true"
       com.centurylinklabs.watchtower.enable: "true"
+  lazylibrarian:
+    container_name: lazylibrarian
+    hostname: lazylibrarian
+    image: linuxserver/lazylibrarian
+    restart: unless-stopped
+    environment:
+    - PGID=${PGID}
+    - PUID=${PUID}
+    - TZ=${TZ}
+    - DOCKER_MODS=linuxserver/calibre-web:calibre
+    networks:
+      - traefik_proxy
+    ports:
+    - 5299:5299
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - ${DOCKERCONFDIR}/lazylibrarian:/config
+    - ${DOCKERSHAREDDIR}:/shared
+    - ${MEDIADIR_DOWNLOAD}:/downloads
+    labels:
+      traefik.enable: "true"
+      traefik.backend: "lazylibrarian"
+      traefik.frontend.rule: "Host:lazylibrarian.${DOMAINNAME}"
+      traefik.port: "5299"
+      traefik.docker.network: "traefik_proxy"
+      traefik.frontend.headers.SSLRedirect: "true"
+      traefik.frontend.headers.STSSeconds: "315360000"
+      traefik.frontend.headers.browserXSSFilter: "true"
+      traefik.frontend.headers.contentTypeNosniff: "true"
+      traefik.frontend.headers.forceSTSHeader: "true"
+      traefik.frontend.headers.SSLHost: "${DOMAINNAME}"
+      traefik.frontend.headers.STSIncludeSubdomains: "true"
+      traefik.frontend.headers.STSPreload: "true"
+      traefik.frontend.headers.frameDeny: "true"
+      com.centurylinklabs.watchtower.enable: "true"
   unifi-controller:
     container_name: unifi-controller
     hostname: unifi
