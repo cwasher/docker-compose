@@ -42,8 +42,8 @@ services:
       - --accessLog.bufferingSize=100 # Configuring a buffer of 100 lines
       - --accessLog.filters.statusCodes=400-499
       - --providers.docker=true
-      # - --providers.docker.endpoint=unix:///var/run/docker.sock # Use Docker Socket Proxy instead for improved security
-      - --providers.docker.endpoint=tcp://socket-proxy:2375
+      - --providers.docker.endpoint=unix:///var/run/docker.sock # Use Docker Socket Proxy instead for improved security
+      # - --providers.docker.endpoint=tcp://socket-proxy:2375
       # - --providers.docker.defaultrule=HostHeader(`{{ index .Labels "com.docker.compose.service" }}.$DOMAINNAME`)
       - --providers.docker.exposedByDefault=false
       # - --entrypoints.https.http.middlewares=chain-authelia@file
@@ -121,8 +121,8 @@ services:
     networks:
       socket_proxy:
     privileged: true
-    # ports:
-    #  - "2375:2375"
+    ports:
+      - "2375:2375"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
