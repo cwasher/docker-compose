@@ -22,7 +22,7 @@ services:
   ###  chmod 600 acme/acme.json
   traefik:
     container_name: traefik
-    image: traefik:2.2.1
+    image: traefik:chevrotin
     restart: unless-stopped
     command: # CLI arguments
       - --global.checkNewVersion=true
@@ -42,8 +42,8 @@ services:
       - --accessLog.bufferingSize=100 # Configuring a buffer of 100 lines
       - --accessLog.filters.statusCodes=400-499
       - --providers.docker=true
-      - --providers.docker.endpoint=unix:///var/run/docker.sock # Use Docker Socket Proxy instead for improved security
-      # - --providers.docker.endpoint=tcp://socket-proxy:2375
+      # - --providers.docker.endpoint=unix:///var/run/docker.sock # Use Docker Socket Proxy instead for improved security
+      - --providers.docker.endpoint=tcp://socket-proxy:2375
       # - --providers.docker.defaultrule=HostHeader(`{{ index .Labels "com.docker.compose.service" }}.$DOMAINNAME`)
       - --providers.docker.exposedByDefault=false
       # - --entrypoints.https.http.middlewares=chain-authelia@file
@@ -84,10 +84,10 @@ services:
         published: 443
         protocol: tcp
         mode: host
-      - target: 8080
-        published: 8080
-        protocol: tcp
-        mode: host
+    #  - target: 8080
+    #    published: 8080
+    #    protocol: tcp
+    #    mode: host
     volumes:
       - $DOCKERCONFDIR/traefik2/rules:/rules # file provider directory
       # - /var/run/docker.sock:/var/run/docker.sock:ro # Use Docker Socket Proxy instead for improved security
