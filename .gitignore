@@ -1,1 +1,5 @@
 .env
+authelia/*
+secrets/*
+traefik/*
+traefik/rules/*
