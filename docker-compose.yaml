@@ -170,15 +170,14 @@ services:
       - VOLUMES=1 # Portainer
       
  ########### MEDIA MANAGEMENT - PVRS
- 
+
    ###  RADARR - MOVIE MANAGEMENT
 
- 
- 
- ########### MAINTENCE
 
-   ###  CLOUDFLARE DDNS - DYNAMIC DNS UPDATED
-   cf-ddns:
+ ########### MAINTENCE
+ 
+  ###  CLOUDFLARE DDNS - DYNAMIC DNS UPDATED
+  cf-ddns:
     container_name: cf-ddns
     image: oznu/cloudflare-ddns:latest
     restart: unless-stopped
@@ -191,10 +190,10 @@ services:
       RRTYPE: A
       DELETE_ON_STOP: "false"
       DNS_SERVER: 1.1.1.1
-   
-   
-   ###  WATCHTOWER - AUTOMATIC CONTAINER UPDATER
-    watchtower:
+
+  
+  ###  WATCHTOWER - AUTOMATIC CONTAINER UPDATER
+  watchtower:
     image: containrrr/watchtower
     container_name: watchtower
     restart: unless-stopped
