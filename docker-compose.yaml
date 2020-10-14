@@ -26,7 +26,7 @@ services:
   ###  chmod 600 acme/acme.json
   traefik:
     container_name: traefik
-    image: traefik:picoden
+    image: traefik:picodon
     restart: unless-stopped
     command: # CLI arguments
       - --global.checkNewVersion=true
