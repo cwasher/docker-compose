@@ -16,14 +16,6 @@ networks:
 
 
 ####  SECRETS
-secrets:
-  cloudflare_email:
-    file: $SECRETSDIR/CLOUDFLARE_EMAIL
-  cloudflare_api_key:
-    file: $SECRETSDIR/CLOUDFLARE_API_KEY
-  cloudflare_api_token:
-    file: $SECRETSDIR/CLOUDFLARE_API_TOKEN
-
 
 ####  SERVICES
 services:
@@ -34,7 +26,7 @@ services:
   ###  chmod 600 acme/acme.json
   traefik:
     container_name: traefik
-    image: traefik:latest
+    image: traefik:picoden
     restart: unless-stopped
     command: # CLI arguments
       - --global.checkNewVersion=true
@@ -102,11 +94,8 @@ services:
       - $DOCKERCONFDIR/traefik2/traefik.log:/traefik.log # for fail2ban - make sure to touch file before starting container
       - $DOCKERSHAREDDIR/shared:/shared
     environment:
-      - CF_API_EMAIL_FILE=/run/secrets/cloudflare_email
-      - CF_API_KEY_FILE=/run/secrets/cloudflare_api_key
-    secrets:
-      - cloudflare_email
-      - cloudflare_api_key
+      - CF_API_EMAIL=$CLOUDFLARE_EMAIL
+      - CF_API_KEY=$CLOUDFLARE_API_KEY
     labels:
       - "traefik.enable=true"
       # HTTP-to-HTTPS Redirect
