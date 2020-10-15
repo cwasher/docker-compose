@@ -217,8 +217,8 @@ services:
       - T2Proxy
     security_opt:
       - no-new-privileges:true
-    ports:
-      - "80:80"
+    #ports:
+    #  - "8282:80"
     volumes:
       - $DOCKERCONFDIR/organizr:/config
     environment:
