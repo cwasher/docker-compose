@@ -357,7 +357,7 @@ services:
       - "traefik.http.services.ombi-svc.loadbalancer.server.port=3579"
  
    ###  AIRSONIC - MUSIC SERVER
-   airsonic:
+  airsonic:
     container_name: airsonic
     image: linuxserver/airsonic:latest
     restart: unless-stopped
