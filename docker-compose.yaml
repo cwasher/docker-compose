@@ -225,7 +225,7 @@ services:
       - PUID=${PUID}
       - TZ=${TZ}
     ports:
-      - "127.0.0.1:7878:7878"
+      - "7878:7878"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - ${DOCKERCONFDIR}/radarr:/config
