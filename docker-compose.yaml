@@ -293,7 +293,7 @@ services:
  
  ########### MEDIA SERVERS
 
-  ###  EMBY - MOVIE MANAGEMENT
+  ###  EMBY - MEDIA SERVER
   emby:
     image: linuxserver/emby
     container_name: emby
@@ -327,7 +327,7 @@ services:
       - "traefik.http.routers.emby-rtr.service=emby-svc"
       - "traefik.http.services.emby-svc.loadbalancer.server.port=8096"
  
-  ###  OMBI - MOVIE MANAGEMENT 
+  ###  OMBI - MEDIA REQUESTS
   ombi:
     image: linuxserver/ombi:latest
     container_name: ombi
@@ -355,6 +355,40 @@ services:
       ## HTTP Services
       - "traefik.http.routers.ombi-rtr.service=ombi-svc"
       - "traefik.http.services.ombi-svc.loadbalancer.server.port=3579"
+ 
+   ###  AIRSONIC - MUSIC SERVER
+   airsonic:
+    container_name: airsonic
+    image: linuxserver/airsonic:latest
+    restart: unless-stopped
+    networks:
+      - T2Proxy
+    security_opt:
+      - no-new-privileges:true
+    # ports:
+    #   - "$AIRSONIC_PORT:4040"
+    volumes:
+      - $MEDIADIR_MUSIC:/music
+      - $DOCKERCONFDIR/airsonic/podcasts:/podcasts
+      - $DOCKERCONFDIR/airsonic/playlists:/playlists
+      - $DOCKERCONFDIR/airsonic/config:/config
+      # - $DOCKERDIR/airsonic/config:/app/airsonic/config #Used to change log level for debugging
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+      - JAVA_OPTS=-Dserver.use-forward-headers=true
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.airsonic-rtr.entrypoints=https"
+      - "traefik.http.routers.airsonic-rtr.rule=Host(`airsonic.$DOMAINNAME`)"
+      ## Middlewares
+      - "traefik.http.routers.airsonic-rtr.middlewares=chain-no-auth@file"
+      ## HTTP Services
+      - "traefik.http.routers.airsonic-rtr.service=airsonic-svc"
+      - "traefik.http.services.airsonic-svc.loadbalancer.server.port=4040"
  
  ########### MAINTENCE
  
