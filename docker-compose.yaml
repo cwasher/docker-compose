@@ -211,7 +211,44 @@ services:
  ########### MEDIA MANAGEMENT - PVRS
 
    ###  RADARR - MOVIE MANAGEMENT
-
+  radarr:
+    container_name: radarr
+    hostname: radarr
+    image: linuxserver/radarr
+    restart: unless-stopped
+    networks:
+      - T2Proxy
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - TZ=${TZ}
+    ports:
+      - "127.0.0.1:7878:7878"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - ${DOCKERCONFDIR}/radarr:/config
+      - ${DOCKERSHAREDDIR}:/shared
+      - ${MEDIADIR_DOWNLOAD}:/downloads
+      - ${MEDIADIR_MOVIES}:/movies
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers Auth Bypass
+      - "traefik.http.routers.radarr-rtr-bypass.entrypoints=https"
+      - "traefik.http.routers.radarr-rtr-bypass.rule=Host(`radarr.$DOMAINNAME`) && (Headers(`X-Api-Key`, `$RADARR_API_KEY`) || Query(`apikey`, `$RADARR_API_KEY`))"
+      - "traefik.http.routers.radarr-rtr-bypass.priority=100"
+      ## HTTP Routers Auth
+      - "traefik.http.routers.radarr-rtr.entrypoints=https"
+      - "traefik.http.routers.radarr-rtr.rule=Host(`radarr.$DOMAINNAME`)"
+      - "traefik.http.routers.radarr-rtr.priority=99"
+      ## Middlewares
+      - "traefik.http.routers.radarr-rtr-bypass.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.radarr-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.radarr-rtr.service=radarr-svc"
+      - "traefik.http.routers.radarr-rtr-bypass.service=radarr-svc"
+      - "traefik.http.services.radarr-svc.loadbalancer.server.port=7878"
 
  ########### MAINTENCE
  
