@@ -207,6 +207,38 @@ services:
       ## HTTP Services
       - "traefik.http.routers.authelia-rtr.service=authelia-svc"
       - "traefik.http.services.authelia-svc.loadbalancer.server.port=9091"
+      
+  ###  ORGANIZR - UNIVIED FRONTEND
+  organizr:
+    container_name: organizr
+    image: organizrtools/organizr-v2:latest
+    restart: unless-stopped
+    networks:
+      - T2Proxy
+    security_opt:
+      - no-new-privileges:true
+    # ports:
+    #   - "$ORGANIZR_PORT:80"
+    volumes:
+      - $DOCKERCONFDIR/organizr:/config
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+      - TZ=$TZ
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.organizr-rtr.entrypoints=https"
+      - "traefik.http.routers.organizr-rtr.rule=Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)"
+      ## Middlewares
+      - "traefik.http.routers.organizr-rtr.middlewares=organizr-redirect@docker,chain-authelia@file"
+        # Redirect non-www to www middleware
+      - "traefik.http.middlewares.organizr-redirect.redirectregex.regex=^https?://$DOMAINNAME/(.*)"
+      - "traefik.http.middlewares.organizr-redirect.redirectregex.replacement=https://www.$DOMAINNAME/$${1}"
+      - "traefik.http.middlewares.organizr-redirect.redirectregex.permanent=true"
+      ## HTTP Services
+      - "traefik.http.routers.organizr-rtr.service=organizr-svc"
+      - "traefik.http.services.organizr-svc.loadbalancer.server.port=80"
  
 ########### MEDIA MANAGEMENT - PVRS
 
