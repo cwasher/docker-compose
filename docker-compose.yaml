@@ -172,7 +172,7 @@ services:
       - IMAGES_DELETE=1 # WatchTower
       
  
-   ###  AUTHELIA (LITE) - SSO & 2FA
+  ###  AUTHELIA (LITE) - SSO & 2FA
   authelia:
     container_name: authelia
     # Check this before upgrading: https://github.com/authelia/authelia/blob/master/BREAKING.md
@@ -208,9 +208,9 @@ services:
       - "traefik.http.routers.authelia-rtr.service=authelia-svc"
       - "traefik.http.services.authelia-svc.loadbalancer.server.port=9091"
  
- ########### MEDIA MANAGEMENT - PVRS
+########### MEDIA MANAGEMENT - PVRS
 
-   ###  RADARR - MOVIE MANAGEMENT
+  ###  RADARR - MOVIE MANAGEMENT
   radarr:
     container_name: radarr
     hostname: radarr
@@ -221,17 +221,17 @@ services:
     security_opt:
       - no-new-privileges:true
     environment:
-      - PGID=${PGID}
-      - PUID=${PUID}
-      - TZ=${TZ}
+      PUID: $PUID
+      PGID: $PGID
+      TZ: $TZ
     ports:
       - "7878:7878"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
-      - ${DOCKERCONFDIR}/radarr:/config
-      - ${DOCKERSHAREDDIR}:/shared
-      - ${MEDIADIR_DOWNLOAD}:/downloads
-      - ${MEDIADIR_MOVIES}:/movies
+      - $DOCKERCONFDIR/radarr:/config
+      - $DOCKERSHAREDDIR:/shared
+      - $MEDIADIR_DOWNLOAD:/downloads
+      - $MEDIADIR_MOVIES:/movies
     labels:
       - "traefik.enable=true"
       ## HTTP Routers Auth Bypass
@@ -243,13 +243,119 @@ services:
       - "traefik.http.routers.radarr-rtr.rule=Host(`radarr.$DOMAINNAME`)"
       - "traefik.http.routers.radarr-rtr.priority=99"
       ## Middlewares
-     # - "traefik.http.routers.radarr-rtr-bypass.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.radarr-rtr-bypass.middlewares=chain-no-auth@file"
       - "traefik.http.routers.radarr-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.radarr-rtr.service=radarr-svc"
       - "traefik.http.routers.radarr-rtr-bypass.service=radarr-svc"
       - "traefik.http.services.radarr-svc.loadbalancer.server.port=7878"
 
+
+  ###  SONARR - TV SHOW MANAGEMENT
+  sonarr:
+    # image: aront/sonarr  #for mp4_automator support
+    image: linuxserver/sonarr
+    container_name: sonarr
+    restart: unless-stopped
+    networks:
+      - T2Proxy
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "8989:8989"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DOCKERCONFDIR}/sonarr:/config
+      - ${DOCKERSHAREDDIR}:/shared
+      - ${MEDIADIR_DOWNLOAD}:/downloads
+      - ${MEDIADIR_TV}:/tv
+    environment:
+      PUID: $PUID
+      PGID: $PGID
+      TZ: $TZ
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers Auth Bypass
+      - "traefik.http.routers.sonarr-rtr-bypass.entrypoints=https"
+      - "traefik.http.routers.sonarr-rtr-bypass.rule=Host(`sonarr.$DOMAINNAME`) && (Headers(`X-Api-Key`, `$SONARR_API_KEY`) || Query(`apikey`, `$SONARR_API_KEY`))"
+      - "traefik.http.routers.sonarr-rtr-bypass.priority=100"
+      ## HTTP Routers Auth
+      - "traefik.http.routers.sonarr-rtr.entrypoints=https"
+      - "traefik.http.routers.sonarr-rtr.rule=Host(`sonarr.$DOMAINNAME`)"
+      - "traefik.http.routers.sonarr-rtr.priority=99"
+      ## Middlewares
+      - "traefik.http.routers.sonarr-rtr-bypass.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.sonarr-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.sonarr-rtr.service=sonarr-svc"
+      - "traefik.http.routers.sonarr-rtr-bypass.service=sonarr-svc"
+      - "traefik.http.services.sonarr-svc.loadbalancer.server.port=8989"
+ 
+ ########### MEDIA SERVERS
+
+  ###  EMBY - MOVIE MANAGEMENT
+  emby:
+    image: linuxserver/emby
+    container_name: emby
+    hostname: emby
+    restart: unless-stopped
+    environment:
+      PUID: $PUID
+      PGID: $PGID
+      TZ: $TZ
+    networks:
+      - T2Proxy
+    ports:
+      - "8096:8096/tcp"
+      - "8920:8920/tcp"
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DOCKERCONFDIR}/emby:/config
+      - ${DOCKERSHAREDDIR}:/shared
+      - ${MEDIADIR_MOVIES}:/data/movies
+      - ${MEDIADIR_TV}:/data/tv
+    labels: 
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.emby-rtr.entrypoints=https"
+      - "traefik.http.routers.emby-rtr.rule=Host(`emby.$DOMAINNAME`)"
+      ## Middlewares
+      - "traefik.http.routers.emby-rtr.middlewares=chain-no-auth@file"
+      ## HTTP Services
+      - "traefik.http.routers.emby-rtr.service=emby-svc"
+      - "traefik.http.services.emby-svc.loadbalancer.server.port=8096"
+ 
+  ###  OMBI - MOVIE MANAGEMENT 
+  ombi:
+    image: linuxserver/ombi:latest
+    container_name: ombi
+    restart: unless-stopped
+    networks:
+      - T2Proxy
+    # ports:
+    #  - "$OMBI_PORT:3579"
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ${DOCKERCONFDIR}/ombi:/config
+    environment:
+      PUID: $PUID
+      PGID: $PGID
+      TZ: $TZ
+      BASE_URL: /ombi #optional
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.ombi-rtr.entrypoints=https"
+      - "traefik.http.routers.ombi-rtr.rule=Host(`ombi.$DOMAINNAME`)"
+      ## Middlewares
+      - "traefik.http.routers.ombi-rtr.middlewares=chain-no-auth@file"
+      ## HTTP Services
+      - "traefik.http.routers.ombi-rtr.service=ombi-svc"
+      - "traefik.http.services.ombi-svc.loadbalancer.server.port=3579"
+ 
  ########### MAINTENCE
  
   ###  CLOUDFLARE DDNS - DYNAMIC DNS UPDATED
