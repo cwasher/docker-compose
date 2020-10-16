@@ -400,7 +400,7 @@ services:
       - "traefik.http.services.nzbget-svc.loadbalancer.server.port=6789"
  
   ###  NZBHYDRA - NZB META SEARCH
-  nzbget:
+  nzbhydra:
     image: linuxserver/nzbhydra2:latest
     container_name: nzbhydra
     hostname: nzbhydra
