@@ -399,6 +399,38 @@ services:
       - "traefik.http.routers.nzbget-rtr-bypass.service=nzbget-svc"
       - "traefik.http.services.nzbget-svc.loadbalancer.server.port=6789"
  
+  ###  NZBHYDRA - NZB META SEARCH
+  nzbget:
+    image: linuxserver/nzbhydra2:latest
+    container_name: nzbhydra
+    hostname: nzbhydra
+    restart: unless-stopped
+    environment:
+      PUID: $PUID
+      PGID: $PGID
+      TZ: $TZ
+    networks:
+      - T2Proxy
+    # ports:
+    #  - "5076:5076"
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DOCKERCONFDIR}/nzbhydra2:/config
+      - ${DOCKERSHAREDDIR}:/shared
+      - ${MEDIADIR_DOWNLOAD}:/downloads
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.hydra-rtr.entrypoints=https"
+      - "traefik.http.routers.hydra-rtr.rule=Host(`hydra.$DOMAINNAME`)"
+      ## Middlewares
+      - "traefik.http.routers.hydra-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.hydra-rtr.service=hydra-svc"
+      - "traefik.http.services.hydra-svc.loadbalancer.server.port=5076"
+ 
   ###  OMBI - MEDIA REQUESTS
   ombi:
     image: linuxserver/ombi:latest
