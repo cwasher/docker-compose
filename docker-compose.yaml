@@ -211,7 +211,7 @@ services:
   ###  ORGANIZR - UNIVIED FRONTEND
   organizr:
     container_name: organizr
-    image: organizrtools/organizr-v2:latest
+    image: organizr/organizr:latest
     restart: unless-stopped
     networks:
       - T2Proxy
