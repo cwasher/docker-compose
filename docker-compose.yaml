@@ -337,6 +337,8 @@ services:
       TZ: $TZ
     networks:
       - T2Proxy
+    devices:
+      - /dev/dri:/dev/dri
     ports:
       - "8096:8096/tcp"
       - "8920:8920/tcp"
