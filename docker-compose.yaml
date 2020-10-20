@@ -363,7 +363,7 @@ services:
       - "traefik.http.services.lidarr-svc.loadbalancer.server.port=8686"
  
  ########### MEDIA SERVERS
-
+  
   ###  EMBY - MEDIA SERVER
   emby:
     image: linuxserver/emby
@@ -575,3 +575,44 @@ services:
       # WATCHTOWER_NOTIFICATIONS_LEVEL: info
       DOCKER_HOST: tcp://socket-proxy:2375
       DOCKER_API_VERSION: "1.40"
+      
+  ###  UNIFI CONTROLLER - MANAGING UNIFI NETWORK
+  # UniFi Controller - Managing UniFi Network
+  # UDP 3478 Port used for STUN. #REQUIRED
+  # TCP 5514 Port used for remote syslog capture.
+  # TCP 8080 Port used for device and controller communication. #REQUIRED
+  # TCP 8443 Port used for controller GUI/API as seen in a web browser #REQUIRED
+  # TCP 8880 Port used for HTTP portal redirection.
+  # TCP 8843 Port used for HTTPS portal redirection.
+  # TCP 6789 Port used for UniFi mobile speed test. #REQUIRED
+  # TCP 27117 Port used for local-bound database communication.
+  # UDP 5656-5699 Ports used by AP-EDU broadcasting.
+  # UDP 10001 Port used for device discovery #REQUIRED
+  # UDP 1900 Port used for "Make controller discoverable on L2 network" in controller settings.
+  unifi:
+    image: jacobalberty/unifi:stable
+    container_name: unifi
+    restart: unless-stopped
+    networks:
+      - T2Proxy
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+      - "3478:3478/udp"
+      - "10001:10001/udp"
+      - "6789:6789"
+      #- "8081:8081"
+      #- "8843:8843"
+      #- "8880:8880"
+    volumes:
+      - ${DOCKERCONFDIR}/unifi:/unifi
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      UNIFI_UID: $PUID
+      UNIFI_GID: $PGID
+      TZ: $TZ
+      RUNAS_UID0: "false"
+      BIND_PRIV: "false"
