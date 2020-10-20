@@ -616,3 +616,13 @@ services:
       TZ: $TZ
       RUNAS_UID0: "false"
       BIND_PRIV: "false"
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.tcp.routers.unifi-rtr.entrypoints=https"
+      - "traefik.tcp.routers.unifi-rtr.rule=HostSNI(`unifi.$DOMAINNAME`)"
+      ## Middlewares
+      - "traefik.tcp.routers.unifi-rtr.middlewares=chain-authelia@file"
+      ## TCP Services
+      - "traefik.tcp.routers.unifi-rtr.service=unifi-svc"
+      - "traefik.tcp.services.unifi-svc.loadbalancer.server.port=8443"
