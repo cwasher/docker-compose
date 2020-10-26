@@ -618,15 +618,14 @@ services:
       BIND_PRIV: "false"
     labels:
       - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.tcp.routers.unifi-rtr.entrypoints=https"
-      - "traefik.tcp.routers.unifi-rtr.rule=HostSNI(`unifi.$DOMAINNAME`)"
-      - "traefik.tcp.routers.unifi-rtr.tls=true"
-      - "traefik.tcp.routers.unifi-rtr.tls.certresolver=dns-cloudflare"
+      ## TCP Routers
+      - "traefik.tcp.routers.unifi-tcp.entrypoints=https"
+      - "traefik.tcp.routers.unifi-tcp.rule=HostSNI(`unifi.$DOMAINNAME`)"
+      - "traefik.tcp.routers.unifi-tcp.tls=true"
+      - "traefik.tcp.routers.unifi-tcp.tls.certresolver=dns-cloudflare"
       ## Middlewares
-      - "traefik.tcp.routers.unifi-rtr.middlewares=chain-authelia@file"
+      - "traefik.tcp.routers.unifi-tcp.middlewares=chain-authelia@file"
       ## TCP Services
-      - "traefik.tcp.routers.unifi-rtr.service=unifi-svc"
-      - "traefik.tcp.routers.unifi-rtr.tls.passthrough=true"
-      - "traefik.tcp.services.unifi-svc.loadbalancer.server.port=8443"
-      - "traefik.http.services.unifi-svc.loadbalancer.server.scheme=https"
+      - "traefik.tcp.services.unifi-tcp-svc.loadbalancer.server.port=8443"
+      - "traefik.http.services.unifi-tcp.loadbalancer.server.scheme=https"
+      - "traefik.tcp.routers.unifi-tcp.tls.passthrough=true"
