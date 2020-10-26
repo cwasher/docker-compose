@@ -43,7 +43,7 @@ services:
       - --entryPoints.traefik.address=:8080
       - --api=true
       # - --api.insecure=true
-      # - --serversTransport.insecureSkipVerify=true
+      - --serversTransport.insecureSkipVerify=true
       - --log=true
       - --log.level=WARN # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
       - --accessLog=true
@@ -627,5 +627,5 @@ services:
       - "traefik.http.routers.unifi.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.services.unifi-svc.loadbalancer.server.port=8443"
-      - "traefik.http.services.unifi.loadbalancer.server.scheme=https"
-      - "traefik.http.routers.unifi.tls.passthrough=true"
+      - "traefik.http.services.unifi-svc.loadbalancer.server.scheme=https"
+      # - "traefik.http.routers.unifi.tls.passthrough=true"
