@@ -627,5 +627,5 @@ services:
       - "traefik.tcp.routers.unifi-tcp.middlewares=chain-authelia@file"
       ## TCP Services
       - "traefik.tcp.services.unifi-tcp-svc.loadbalancer.server.port=8443"
-      - "traefik.http.services.unifi-tcp.loadbalancer.server.scheme=https"
+      - "traefik.tcp.services.unifi-tcp.loadbalancer.server.scheme=https"
       - "traefik.tcp.routers.unifi-tcp.tls.passthrough=true"
