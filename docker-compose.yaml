@@ -133,7 +133,7 @@ services:
     image: tecnativa/docker-socket-proxy
     restart: always
     networks:
-      socket_proxy:
+      - socket_proxy
     privileged: true
     ports:
       - "127.0.0.1:2375:2375"
