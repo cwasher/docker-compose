@@ -413,8 +413,8 @@ services:
       TZ: $TZ
     networks:
       - trfk_proxy
-    # ports:
-    #  - "6789:6789"
+    ports:
+      - "6789:6789"
     security_opt:
       - no-new-privileges:true
     volumes:
@@ -453,8 +453,8 @@ services:
       TZ: $TZ
     networks:
       - trfk_proxy
-    # ports:
-    #  - "5076:5076"
+    ports:
+      - "5076:5076"
     security_opt:
       - no-new-privileges:true
     volumes:
