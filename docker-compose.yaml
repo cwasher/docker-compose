@@ -180,7 +180,7 @@ services:
     image: authelia/authelia:latest
     restart: always
     networks:
-      - T2Proxy
+      - trfk_proxy
     # ports:
     #   - "9091:9091"
     volumes:
