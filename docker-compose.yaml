@@ -455,7 +455,7 @@ services:
       - "8084:8080"
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${DOCKERCONFDIR}/nzbget:/config
+      - ${DOCKERCONFDIR}/sabnzbd:/config
       - ${DOCKERSHAREDDIR}:/shared
       - ${MEDIADIR_DOWNLOAD}:/downloads
     environment:
