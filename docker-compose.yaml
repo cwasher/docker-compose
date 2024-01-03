@@ -435,47 +435,6 @@ services:
       ## HTTP Services
       - "traefik.http.routers.emby-rtr.service=emby-svc"
       - "traefik.http.services.emby-svc.loadbalancer.server.port=8096"
- 
-  # ###  NZBGET - NZB DOWNLOAD SERVER
-  # nzbget:
-    # image: nzbgetcom/nzbget:latest
-    # container_name: nzbget
-    # hostname: nzbget
-    # restart: unless-stopped
-    # environment:
-      # PUID: $PUID
-      # PGID: $PGID
-      # TZ: $TZ
-    # networks:
-      # - trfk_proxy
-    # ports:
-      # - "6789:6789"
-    # security_opt:
-      # - no-new-privileges:true
-    # volumes:
-      # - /etc/localtime:/etc/localtime:ro
-      # - ${DOCKERCONFDIR}/nzbget:/config
-      # - ${DOCKERSHAREDDIR}:/shared
-      # - ${MEDIADIR_DOWNLOAD}:/downloads
-    # labels: 
-      # - "traefik.enable=true"
-      # ## HTTP Routers Auth Bypass
-      # # - "traefik.http.routers.nzbget-rtr-bypass.entrypoints=https"
-      # # - "traefik.http.routers.nzbget-rtr-bypass.rule=Host(`nzbget.$DOMAINNAME`) && (Headers(`X-Api-Key`, `$NZBGET_API_KEY`) || Query(`apikey`, `$NZBGET_API_KEY`))"
-      # # - "traefik.http.routers.nzbget-rtr-bypass.priority=100"
-      # ## HTTP Routers Auth
-      # - "traefik.http.routers.nzbget-rtr.entrypoints=https"
-      # - "traefik.http.routers.nzbget-rtr.rule=Host(`nzbget.$DOMAINNAME`)"
-      # # - "traefik.http.routers.nzbget-rtr.priority=99"
-      # ## Middlewares
-      # # - "traefik.http.routers.nzbget-rtr-bypass.middlewares=chain-no-auth@file"
-      # - "traefik.http.routers.nzbget-rtr.middlewares=chain-authelia@file"
-      # # - "traefik.http.routers.nzbget-rtr.middlewares=chain-no-auth@file"
-      # ## HTTP Services
-      # - "traefik.http.routers.nzbget-rtr.service=nzbget-svc"
-      # # - "traefik.http.routers.nzbget-rtr-bypass.service=nzbget-svc"
-      # - "traefik.http.services.nzbget-svc.loadbalancer.server.port=6789"
-  
   
   ###  SABnzbd - NZB DOWNLOADER
   sabnzbd:
@@ -622,8 +581,10 @@ services:
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
+    secrets:
+      - cloudflare_api_token_secret
     environment:
-      API_KEY: $CLOUDFLARE_API_TOKEN
+      API_KEY: /run/secrets/cloudflare_api_token_secret
       ZONE: $DOMAINNAME
       PROXIED: "true"
       RRTYPE: A
