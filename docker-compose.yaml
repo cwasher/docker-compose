@@ -564,8 +564,8 @@ services:
     environment:
       CUPS_WEBINTERFACE: yes
       CUPS_REMOTE_ADMIN: yes
-      CUPS_USER_ADMIN: admin
-      CUPS_USER_PASSWORD: test123    
+      CUPS_ADMIN_USER: admin
+      CUPS_ADMIN_PASSWORD: test123
   
   
   # ###  WATCHTOWER - AUTOMATIC CONTAINER UPDATER
