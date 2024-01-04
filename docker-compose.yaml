@@ -561,6 +561,9 @@ services:
       - 445:445/tcp
       - 631:631/tcp
       - 5353:5353/udp
+    volumes:
+      - $DOCKERCONFDIR/airprint-bridge/printers.conf:/etc/cups/printers.conf
+      - $DOCKERCONFDIR/airprint-bridge/Brother_MFC-7460DN.ppd:/etc/cups/ppd/Brother_MFC-7460DN.ppd
     environment:
       CUPS_WEBINTERFACE: yes
       CUPS_REMOTE_ADMIN: yes
