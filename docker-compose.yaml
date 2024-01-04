@@ -562,14 +562,16 @@ services:
       - 631:631/tcp
       - 5353:5353/udp
     volumes:
-      - $DOCKERCONFDIR/airprint-bridge/printers.conf:/etc/cups/printers.conf
-      - $DOCKERCONFDIR/airprint-bridge/Brother_MFC-7460DN.ppd:/etc/cups/ppd/Brother_MFC-7460DN.ppd
+     # - $DOCKERCONFDIR/airprint-bridge/printers.conf:/etc/cups/printers.conf
+     # - $DOCKERCONFDIR/airprint-bridge/Brother_MFC-7460DN.ppd:/etc/cups/ppd/Brother_MFC-7460DN.ppd
     environment:
       CUPS_WEBINTERFACE: yes
       CUPS_REMOTE_ADMIN: yes
       CUPS_ADMIN_USER: admin
       CUPS_ADMIN_PASSWORD: test123
-  
+      CUPS_LPADMIN_PRINTER1: lpadmin -p Brother_MFC-7460DN -D "Brother MFC-7460DN" -m 'Brother MFC-7360N, using brlaser v6' -v lpd://BRN001BA9848BFF/BINARY_P1 -o PageSize=Letter MediaType=PLAIN InputSlot=Auto Resolution=600dpi
+      CUPS_LPADMIN_PRINTER1_ENABLE: cupsenable Brother_MFC-7460DN
+      CUPS_LPADMIN_PRINTER1_ACCEPT: cupsaccept Brother_MFC-7460DN
   
   # ###  WATCHTOWER - AUTOMATIC CONTAINER UPDATER
   # watchtower:
