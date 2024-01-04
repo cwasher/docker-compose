@@ -38,6 +38,15 @@ networks:
     ipam:
       config:
         - subnet: 192.168.91.0/24
+  airprint_macvlan:
+    name: airprint_macvlan
+    driver: macvlan
+    driver_opts:
+      parent: eno1
+    ipam:
+      config:
+        - subnet: 192.168.10.0/24
+          gateway: 192.168.10.1
 
 ####  SECRETS
 secrets:
@@ -246,38 +255,7 @@ services:
       - "traefik.http.routers.authelia-rtr.service=authelia-svc"
       - "traefik.http.services.authelia-svc.loadbalancer.server.port=9091"
       
-  # ###  ORGANIZR - UNIFIED FRONTEND
-  # organizr:
-    # container_name: organizr
-    # image: organizr/organizr:latest
-    # restart: unless-stopped
-    # networks:
-      # - T2Proxy
-    # security_opt:
-      # - no-new-privileges:true
-    # #ports:
-    # #  - "8282:80"
-    # volumes:
-      # - $DOCKERCONFDIR/organizr:/config
-    # environment:
-      # - PUID=$PUID
-      # - PGID=$PGID
-      # - TZ=$TZ
-    # labels:
-      # - "traefik.enable=true"
-      # ## HTTP Routers
-      # - "traefik.http.routers.organizr-rtr.entrypoints=https"
-      # - "traefik.http.routers.organizr-rtr.rule=Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)"
-      # ## Middlewares
-      # - "traefik.http.routers.organizr-rtr.middlewares=organizr-redirect@docker,chain-authelia@file"
-        # # Redirect non-www to www middleware
-      # - "traefik.http.middlewares.organizr-redirect.redirectregex.regex=^https?://$DOMAINNAME/(.*)"
-      # - "traefik.http.middlewares.organizr-redirect.redirectregex.replacement=https://www.$DOMAINNAME/$${1}"
-      # - "traefik.http.middlewares.organizr-redirect.redirectregex.permanent=true"
-      # ## HTTP Services
-      # - "traefik.http.routers.organizr-rtr.service=organizr-svc"
-      # - "traefik.http.services.organizr-svc.loadbalancer.server.port=80"
- 
+      
 ########### MEDIA MANAGEMENT - PVRS
 
   ###  RADARR - MOVIE MANAGEMENT
@@ -541,10 +519,9 @@ services:
       # - "traefik.http.routers.airsonic-rtr.service=airsonic-svc"
       # - "traefik.http.services.airsonic-svc.loadbalancer.server.port=4040"
  
- ########### MAINTENCE
+####  UTILITIES
  
-  ###  CLOUDFLARE DDNS - DYNAMIC DNS UPDATER
-   
+#  CLOUDFLARE DDNS - DYNAMIC DNS UPDATER
   ddns-updater:
     image: qmcgaw/ddns-updater
     container_name: ddns-updater
@@ -570,6 +547,26 @@ services:
       # Other
       LOG_LEVEL: info
 
+#  CUPS AIRPRINT BRIDGE - CUPS/AVAHI, ALLOWS LOCAL PRINTERS TO BE EXPOSED VIA AIRPRINT
+  airprint-bridge:
+    image: drpsychick/airprint-bridge
+    container_name: airprint-bridge
+    restart: unless-stopped
+    networks:
+      airprint_macvlan:
+        ipv4_address: 192.168.10.49
+    ports:
+      - 137:137/udp
+      - 139:139/tcp
+      - 445:445/tcp
+      - 631:631/tcp
+      - 5353:5353/udp
+    environment:
+      CUPS_WEBINTERFACE: yes
+      CUPS_REMOTE_ADMIN: yes
+      CUPS_USER_ADMIN: admin
+      CUPS_USER_PASSWORD: test123    
+  
   
   # ###  WATCHTOWER - AUTOMATIC CONTAINER UPDATER
   # watchtower:
