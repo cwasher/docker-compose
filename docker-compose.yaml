@@ -47,10 +47,10 @@ secrets:
     file: $SECRETSDIR/AUTHELIA_SESSION_SECRET
   cloudflare_email_secret:
     file: $SECRETSDIR/CLOUDFLARE_EMAIL
-  cloudflare_api_key_secret:
-    file: $SECRETSDIR/CLOUDFLARE_API_KEY
-  cloudflare_api_token_secret:
-    file: $SECRETSDIR/CLOUDFLARE_API_TOKEN
+  cloudflare_global_api_key_secret:
+    file: $SECRETSDIR/CLOUDFLARE_GLOBAL_API_KEY
+  cloudflare_traefik_dns_api_token_secret:
+    file: $SECRETSDIR/CLOUDFLARE_TRAEFIK_DNS_API_TOKEN
     
 ####  SERVICES
 services:
@@ -86,7 +86,7 @@ services:
       #- --serversTransport.insecureSkipVerify=true
       - --log=true
       - --log.filePath=/logs/traefik.log
-      - --log.level=INFO # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+      - --log.level=DEBUG # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
       - --accessLog=true
       - --accessLog.filePath=/logs/access.log
       - --accessLog.bufferingSize=100 # Configuring a buffer of 100 lines
@@ -136,12 +136,14 @@ services:
       - $DOCKERSHAREDDIR/logs:/logs # for fail2ban - make sure to touch file before starting container
       - $DOCKERSHAREDDIR:/shared
     secrets:
-      - cloudflare_email_secret
-      - cloudflare_api_key_secret
+      - cloudflare_traefik_dns_api_token_secret
+      #- cloudflare_email_secret
+      #- cloudflare_api_key_secret
     environment:
       - TZ=$TZ
-      - CF_API_EMAIL=/run/secrets/cloudflare_email_secret
-      - CF_API_KEY=/run/secrets/cloudflare_api_key_secret
+      - CF_DNS_API_TOKEN_FILE=/run/secrets/cloudflare_traefik_dns_api_token_secret
+      #- CF_API_EMAIL=/run/secrets/cloudflare_email_secret
+      #- CF_API_KEY=/run/secrets/cloudflare_api_key_secret
       - DOMAINNAME
     labels:
       - "traefik.enable=true"
@@ -474,40 +476,7 @@ services:
       - "traefik.http.routers.sabnzbd-rtr.service=sabnzbd-svc"
       - "traefik.http.routers.sabnzbd-rtr-bypass.service=sabnzbd-svc"
       - "traefik.http.services.sabnzbd-svc.loadbalancer.server.port=8080"
-     
-  
-  
-  ###  NZBHYDRA - NZB META SEARCH
-  nzbhydra:
-    image: linuxserver/nzbhydra2:latest
-    container_name: nzbhydra
-    hostname: nzbhydra
-    restart: unless-stopped
-    environment:
-      PUID: $PUID
-      PGID: $PGID
-      TZ: $TZ
-    networks:
-      - trfk_proxy
-    ports:
-      - "5076:5076"
-    security_opt:
-      - no-new-privileges:true
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ${DOCKERCONFDIR}/nzbhydra2:/config
-      - ${DOCKERSHAREDDIR}:/shared
-      - ${MEDIADIR_DOWNLOAD}:/downloads
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.hydra-rtr.entrypoints=https"
-      - "traefik.http.routers.hydra-rtr.rule=Host(`hydra.$DOMAINNAME`)"
-      ## Middlewares
-      - "traefik.http.routers.hydra-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.hydra-rtr.service=hydra-svc"
-      - "traefik.http.services.hydra-svc.loadbalancer.server.port=5076"
+ 
  
   # ###  OMBI - MEDIA REQUESTS
   # ombi:
