@@ -543,22 +543,32 @@ services:
  
  ########### MAINTENCE
  
-  ###  CLOUDFLARE DDNS - DYNAMIC DNS UPDATED
-  # cf-ddns:
-    # container_name: cf-ddns
-    # image: oznu/cloudflare-ddns:latest
-    # restart: unless-stopped
-    # security_opt:
-      # - no-new-privileges:true
-    # secrets:
-      # - cloudflare_api_token_secret
-    # environment:
-      # API_KEY: /run/secrets/cloudflare_api_token_secret
-      # ZONE: $DOMAINNAME
-      # PROXIED: "true"
-      # RRTYPE: A
-      # DELETE_ON_STOP: "false"
-      # DNS_SERVER: 1.1.1.1
+  ###  CLOUDFLARE DDNS - DYNAMIC DNS UPDATER
+   
+  ddns-updater:
+    image: qmcgaw/ddns-updater
+    container_name: ddns-updater
+    restart: unless-stopped
+    network_mode: bridge
+    ports:
+      - 8000:8000/tcp
+    volumes:
+      - $DOCKERCONFDIR/ddns-updater:/updater/data # Owned by UID 1000
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      PERIOD: 12h
+      UPDATE_COOLDOWN_PERIOD: 5m
+      PUBLICIP_DNS_TIMEOUT: 3s
+      HTTP_TIMEOUT: 10s
+      # Web UI
+      LISTENING_PORT: 8000
+      # Backup
+      BACKUP_PERIOD: 96h # 0 to disable
+      BACKUP_DIRECTORY: /updater/data/backups
+      # Other
+      LOG_LEVEL: info
 
   
   # ###  WATCHTOWER - AUTOMATIC CONTAINER UPDATER
