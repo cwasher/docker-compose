@@ -569,8 +569,8 @@ services:
       CUPS_REMOTE_ADMIN: yes
       CUPS_ADMIN_USER: admin
       CUPS_ADMIN_PASSWORD: test123
-      CUPS_LPADMIN_PRINTER1: lpadmin -p Brother_MFC-7460DN -D "Brother MFC-7460DN" -m 'Brother MFC-7360N, using brlaser v6' -v lpd://BRN001BA9848BFF/BINARY_P1 -o PageSize=Letter MediaType=PLAIN InputSlot=Auto Resolution=600dpi
-      CUPS_LPADMIN_PRINTER1_ENABLE: cupsenable Brother_MFC-7460DN
+      CUPS_LPADMIN_PRINTER1: lpadmin -p Brother_MFC-7460DN -D "Brother MFC-7460DN" -m drv:///brlaser.drv/br7360n.ppd -v lpd://BRN001BA9848BFF/BINARY_P1 -o PageSize=Letter
+      CUPS_LPADMIN_PRINTElR1_ENABLE: cupsenable Brother_MFC-7460DN
       CUPS_LPADMIN_PRINTER1_ACCEPT: cupsaccept Brother_MFC-7460DN
   
   # ###  WATCHTOWER - AUTOMATIC CONTAINER UPDATER
