@@ -292,7 +292,8 @@ services:
       - "traefik.http.routers.radarr-rtr.priority=99"
       ## Middlewares
       - "traefik.http.routers.radarr-rtr-bypass.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.radarr-rtr.middlewares=chain-authelia@file"
+      #- "traefik.http.routers.radarr-rtr.middlewares=chain-authelia@file"
+      - "traefik.http.routers.radarr-rtr.middlewares=chain-no-auth@file"
       ## HTTP Services
       - "traefik.http.routers.radarr-rtr.service=radarr-svc"
       - "traefik.http.routers.radarr-rtr-bypass.service=radarr-svc"
@@ -395,6 +396,11 @@ services:
  ########### MEDIA SERVERS
   
   ###  PLEX - MEDIA SERVER
+  # Create an SSH tunnel in order to claim plex server. Must claim server from same network where server is hosted,
+  # in this case its the docker network. Or else the PMS will refuse connection. Create an SSH tunnel:
+  # ssh user@dockerip -L 32400:127.0.0.1:32400
+  # once tunnel is established, generate claim code, paste code in secret, start plex container
+  # visit localhost:32400/web on client machine to claim server.
   plex:
     image: lscr.io/linuxserver/plex:latest
     container_name: plex
