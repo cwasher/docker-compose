@@ -379,6 +379,37 @@ services:
       # - "traefik.http.routers.lidarr-rtr-bypass.service=lidarr-svc"
       # - "traefik.http.services.lidarr-svc.loadbalancer.server.port=8686"
  
+   ###  PROWLARR - NZB PROXY
+  prowlarr:
+    container_name: prowlarr
+    hostname: prowlarr
+    image: lscr.io/linuxserver/prowlarr:latest
+    restart: unless-stopped
+    networks:
+      - trfk_proxy
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      PUID: $PUID
+      PGID: $PGID
+      TZ: $TZ
+    ports:
+      - "9696:9696"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - $DOCKERCONFDIR/prowlarr:/config
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers Auth
+      - "traefik.http.routers.prowlarr-rtr.entrypoints=https"
+      - "traefik.http.routers.prowlarr-rtr.rule=Host(`prowlarr.$DOMAINNAME`)"
+      ## Middlewares
+      #- "traefik.http.routers.prowlarr-rtr.middlewares=chain-authelia@file"
+      - "traefik.http.routers.prowlarr-rtr.middlewares=chain-no-auth@file"
+      ## HTTP Services
+      - "traefik.http.routers.prowlarr-rtr.service=prowlarr-svc"
+      - "traefik.http.services.prowlarr-svc.loadbalancer.server.port=9696"
+  
   ###  RECYCLARR - CLI APPLICATION THAT SYNCS TRASH GUIDE SETTINGS TO SONARR/RADARR
   recyclarr:
     image: ghcr.io/recyclarr/recyclarr:latest
