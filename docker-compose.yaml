@@ -299,6 +299,45 @@ services:
       - "traefik.http.routers.radarr-rtr-bypass.service=radarr-svc"
       - "traefik.http.services.radarr-svc.loadbalancer.server.port=7878"
 
+  ###  RADARR 4K - MOVIE MANAGEMENT
+  radarr4k:
+    container_name: radarr4k
+    hostname: radarr4k
+    image: lscr.io/linuxserver/radarr:latest
+    restart: unless-stopped
+    networks:
+      - trfk_proxy
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      PUID: $PUID
+      PGID: $PGID
+      TZ: $TZ
+    ports:
+      - "7879:7878"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - $DOCKERCONFDIR/radarr4k:/config
+      - $MEDIADIR_DOWNLOAD:/mnt/downloads
+      - $MEDIADIR_MOVIES4K:/mnt/movies4k
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers Auth Bypass
+      - "traefik.http.routers.radarr4k-rtr-bypass.entrypoints=https"
+      - "traefik.http.routers.radarr4k-rtr-bypass.rule=Host(`radarr4k.$DOMAINNAME`) && (Headers(`X-Api-Key`, `$RADARR4K_API_KEY`) || Query(`apikey`, `$RADARR4K_API_KEY`))"
+      - "traefik.http.routers.radarr4k-rtr-bypass.priority=100"
+      ## HTTP Routers Auth
+      - "traefik.http.routers.radarr4k-rtr.entrypoints=https"
+      - "traefik.http.routers.radarr4k-rtr.rule=Host(`radarr4k.$DOMAINNAME`)"
+      - "traefik.http.routers.radarr4k-rtr.priority=99"
+      ## Middlewares
+      - "traefik.http.routers.radarr4k-rtr-bypass.middlewares=chain-no-auth@file"
+      #- "traefik.http.routers.radarr4k-rtr.middlewares=chain-authelia@file"
+      - "traefik.http.routers.radarr4k-rtr.middlewares=chain-no-auth@file"
+      ## HTTP Services
+      - "traefik.http.routers.radarr4k-rtr.service=radarr4k-svc"
+      - "traefik.http.routers.radarr4k-rtr-bypass.service=radarr4k-svc"
+      - "traefik.http.services.radarr4k-svc.loadbalancer.server.port=7878"
 
   ###  SONARR - TV SHOW MANAGEMENT
   sonarr:
