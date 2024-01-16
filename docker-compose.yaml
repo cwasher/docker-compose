@@ -278,8 +278,7 @@ services:
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - $DOCKERCONFDIR/radarr:/config
-      - $MEDIADIR_DOWNLOAD:/mnt/downloads
-      - $MEDIADIR_MOVIES:/mnt/movies
+      - $MEDIADIR_ROOT:/mnt/medialibrary
     labels:
       - "traefik.enable=true"
       ## HTTP Routers Auth Bypass
@@ -318,8 +317,7 @@ services:
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - $DOCKERCONFDIR/radarr4k:/config
-      - $MEDIADIR_DOWNLOAD:/mnt/downloads
-      - $MEDIADIR_MOVIES4K:/mnt/movies4k
+      - $MEDIADIR_ROOT:/mnt/medialibrary
     labels:
       - "traefik.enable=true"
       ## HTTP Routers Auth Bypass
@@ -353,9 +351,8 @@ services:
       - "8989:8989"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
-      - ${DOCKERCONFDIR}/sonarr:/config
-      - ${MEDIADIR_DOWNLOAD}:/mnt/downloads
-      - ${MEDIADIR_TV}:/mnt/tv
+      - $DOCKERCONFDIR/sonarr:/config
+      - $MEDIADIR_ROOT:/mnt/medialibrary
     environment:
       PUID: $PUID
       PGID: $PGID
@@ -392,10 +389,8 @@ services:
       # - "8686:8686"
     # volumes:
       # - /etc/localtime:/etc/localtime:ro
-      # - ${DOCKERCONFDIR}/lidarr:/config
-      # - ${DOCKERSHAREDDIR}:/shared
-      # - ${MEDIADIR_DOWNLOAD}:/downloads
-      # - ${MEDIADIR_MUSIC}:/music
+      # - $DOCKERCONFDIR/lidarr:/config
+      # - $MEDIADIR_ROOT:/mnt/medialibrary
     # environment:
       # PUID: $PUID
       # PGID: $PGID
@@ -460,7 +455,7 @@ services:
       - no-new-privileges:true
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
-      - ${DOCKERCONFDIR}/recyclarr:/config
+      - $DOCKERCONFDIR/recyclarr:/config
     environment:
       TZ: $TZ
  
@@ -503,10 +498,8 @@ services:
       - no-new-privileges:true
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${DOCKERCONFDIR}/plex:/config
-      - ${MEDIADIR_MOVIES}:/movies
-      - ${MEDIADIR_MOVIES4K}:/movies4k
-      - ${MEDIADIR_TV}:/tv
+      - $DOCKERCONFDIR/plex:/config
+      - $MEDIADIR_MEDIA:/mnt/media
     labels: 
       - "traefik.enable=true"
       ## HTTP Routers
@@ -531,9 +524,8 @@ services:
       - "8084:8080"
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${DOCKERCONFDIR}/sabnzbd:/config
-      - ${DOCKERSHAREDDIR}:/shared
-      - ${MEDIADIR_DOWNLOAD}:/downloads
+      - $DOCKERCONFDIR/sabnzbd:/config
+      - $MEDIADIR_DOWNLOADS:/mnt/downloads
     environment:
       PUID: $PUID
       PGID: $PGID
