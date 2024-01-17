@@ -3,3 +3,4 @@ authelia/*
 secrets/*
 traefik/*
 traefik/rules/*
+recyclarr/*

@@ -450,7 +450,7 @@ services:
     container_name: recyclarr
     restart: unless-stopped
     networks:
-      - default
+      - trfk_proxy
     security_opt:
       - no-new-privileges:true
     user: $PUID:$PGID
