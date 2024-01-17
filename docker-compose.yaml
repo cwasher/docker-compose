@@ -453,6 +453,7 @@ services:
       - default
     security_opt:
       - no-new-privileges:true
+    user: $PUID:$PGID
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - $DOCKERCONFDIR/recyclarr:/config
