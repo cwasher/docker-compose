@@ -500,7 +500,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - $DOCKERCONFDIR/plex:/config
-      - $MEDIADIR_MEDIA:/mnt/media
+      - $MEDIADIR_MEDIA:/mnt/medialibrary/media
     labels: 
       - "traefik.enable=true"
       ## HTTP Routers
