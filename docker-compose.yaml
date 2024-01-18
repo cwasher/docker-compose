@@ -279,6 +279,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - $DOCKERCONFDIR/radarr:/config
       - $MEDIADIR_ROOT:/mnt/medialibrary
+      - $MEDIADIR_DOWNLOADS:/mnt/downloads
     labels:
       - "traefik.enable=true"
       ## HTTP Routers Auth Bypass
