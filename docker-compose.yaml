@@ -526,7 +526,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - $DOCKERCONFDIR/sabnzbd:/config
-      - $MEDIADIR_DOWNLOADS:/mnt/downloads
+      - $MEDIADIR_DOWNLOADS:/mnt/medialibrary/downloads
     environment:
       PUID: $PUID
       PGID: $PGID
