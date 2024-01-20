@@ -459,7 +459,7 @@ services:
       - $DOCKERCONFDIR/recyclarr:/config
     environment:
       TZ: $TZ
-      CRON_SCHEDULE: @daily
+      CRON_SCHEDULE: "@daily"
  
  ########### MEDIA SERVERS
   
