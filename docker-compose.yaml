@@ -492,6 +492,37 @@ services:
     environment:
       TZ: $TZ
       CRON_SCHEDULE: "@daily"
+
+  ###  BAZARR - SUBTITLE MANAGEMENT
+  bazarr:
+    container_name: bazarr
+    hostname: bazarr
+    image: lscr.io/linuxserver/bazarr:latest
+    restart: unless-stopped
+    networks:
+      - trfk_proxy
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      PUID: $PUID
+      PGID: $PGID
+      TZ: $TZ
+    ports:
+      - "6767:6767"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - $DOCKERCONFDIR/bazarr:/config
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers Auth
+      - "traefik.http.routers.bazarr-rtr.entrypoints=https"
+      - "traefik.http.routers.bazarr-rtr.rule=Host(`bazarr.$DOMAINNAME`)"
+      ## Middlewares
+      #- "traefik.http.routers.bazarr-rtr.middlewares=chain-authelia@file"
+      - "traefik.http.routers.bazarr-rtr.middlewares=chain-no-auth@file"
+      ## HTTP Services
+      - "traefik.http.routers.bazarr-rtr.service=bazarr-svc"
+      - "traefik.http.services.bazarr-svc.loadbalancer.server.port=6767"
  
  ########### MEDIA SERVERS
   
@@ -583,36 +614,6 @@ services:
       - "traefik.http.routers.sabnzbd-rtr.service=sabnzbd-svc"
       - "traefik.http.routers.sabnzbd-rtr-bypass.service=sabnzbd-svc"
       - "traefik.http.services.sabnzbd-svc.loadbalancer.server.port=8080"
- 
- 
-  # ###  OMBI - MEDIA REQUESTS
-  # ombi:
-    # image: linuxserver/ombi:latest
-    # container_name: ombi
-    # restart: unless-stopped
-    # networks:
-      # - T2Proxy
-    # # ports:
-    # #  - "$OMBI_PORT:3579"
-    # security_opt:
-      # - no-new-privileges:true
-    # volumes:
-      # - ${DOCKERCONFDIR}/ombi:/config
-    # environment:
-      # PUID: $PUID
-      # PGID: $PGID
-      # TZ: $TZ
-      # BASE_URL: /ombi #optional
-    # labels:
-      # - "traefik.enable=true"
-      # ## HTTP Routers
-      # - "traefik.http.routers.ombi-rtr.entrypoints=https"
-      # - "traefik.http.routers.ombi-rtr.rule=Host(`ombi.$DOMAINNAME`)"
-      # ## Middlewares
-      # - "traefik.http.routers.ombi-rtr.middlewares=chain-authelia@file"
-      # ## HTTP Services
-      # - "traefik.http.routers.ombi-rtr.service=ombi-svc"
-      # - "traefik.http.services.ombi-svc.loadbalancer.server.port=3579"
  
    # ###  AIRSONIC - MUSIC SERVER
   # airsonic:
