@@ -512,6 +512,7 @@ services:
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - $DOCKERCONFDIR/bazarr:/config
+      - $MEDIADIR_ROOT:/mnt/medialibrary
     labels:
       - "traefik.enable=true"
       ## HTTP Routers Auth
