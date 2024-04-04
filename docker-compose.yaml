@@ -439,7 +439,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers Auth Bypass
       - "traefik.http.routers.readarr-rtr-bypass.entrypoints=https"
-      - "traefik.http.routers.readarr-rtr-bypass.rule=Host(`readarr.$DOMAINNAME`) && (Headers(`X-Api-Key`, `$readarr_API_KEY`) || Query(`apikey`, `$readarr_API_KEY`))"
+      - "traefik.http.routers.readarr-rtr-bypass.rule=Host(`readarr.$DOMAINNAME`) && (Headers(`X-Api-Key`, `$READARR_API_KEY`) || Query(`apikey`, `$READARR_API_KEY`))"
       - "traefik.http.routers.readarr-rtr-bypass.priority=100"
       ## HTTP Routers Auth
       - "traefik.http.routers.readarr-rtr.entrypoints=https"
