@@ -415,7 +415,7 @@ services:
       - "traefik.http.routers.lidarr-rtr-bypass.service=lidarr-svc"
       - "traefik.http.services.lidarr-svc.loadbalancer.server.port=8686"
  
-  ###  READARR - eBOOK AND AUDIOBOOK MANAGEMENT
+  ###  READARR - eBOOK MANAGEMENT
   readarr:
     container_name: readarr
     hostname: readarr
@@ -453,6 +453,45 @@ services:
       - "traefik.http.routers.readarr-rtr.service=readarr-svc"
       - "traefik.http.routers.readarr-rtr-bypass.service=readarr-svc"
       - "traefik.http.services.readarr-svc.loadbalancer.server.port=8787"
+
+  ###  READARR AUDIO - AUDIOBOOK MANAGEMENT
+  readarraudio:
+    container_name: readarraudio
+    hostname: readarraudio
+    image: lscr.io/linuxserver/readarr:develop
+    restart: unless-stopped
+    networks:
+      - trfk_proxy
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      PUID: $PUID
+      PGID: $PGID
+      TZ: $TZ
+    ports:
+      - "8788:8787"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - $DOCKERCONFDIR/readarraudio:/config
+      - $MEDIADIR_ROOT:/mnt/medialibrary
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers Auth Bypass
+      - "traefik.http.routers.readarraudio-rtr-bypass.entrypoints=https"
+      - "traefik.http.routers.readarraudio-rtr-bypass.rule=Host(`readarraudio.$DOMAINNAME`) && (Headers(`X-Api-Key`, `$READARRAUDIO_API_KEY`) || Query(`apikey`, `$READARRAUDIO_API_KEY`))"
+      - "traefik.http.routers.readarraudio-rtr-bypass.priority=100"
+      ## HTTP Routers Auth
+      - "traefik.http.routers.readarraudio-rtr.entrypoints=https"
+      - "traefik.http.routers.readarraudio-rtr.rule=Host(`readarraudio.$DOMAINNAME`)"
+      - "traefik.http.routers.readarraudio-rtr.priority=99"
+      ## Middlewares
+      - "traefik.http.routers.readarraudio-rtr-bypass.middlewares=chain-no-auth@file"
+      # - "traefik.http.routers.readarraudio-rtr.middlewares=chain-authelia@file"
+      - "traefik.http.routers.readarraudio-rtr.middlewares=chain-no-auth@file"
+      ## HTTP Services
+      - "traefik.http.routers.readarraudio-rtr.service=readarraudio-svc"
+      - "traefik.http.routers.readarraudio-rtr-bypass.service=readarraudio-svc"
+      - "traefik.http.services.readarraudio-svc.loadbalancer.server.port=8787"
 
   ###  PROWLARR - NZB PROXY
   prowlarr:
