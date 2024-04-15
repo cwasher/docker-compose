@@ -414,6 +414,44 @@ services:
       - "traefik.http.routers.lidarr-rtr.service=lidarr-svc"
       - "traefik.http.routers.lidarr-rtr-bypass.service=lidarr-svc"
       - "traefik.http.services.lidarr-svc.loadbalancer.server.port=8686"
+
+  lidarr2:
+    container_name: lidarr2
+    hostname: lidarr2
+    image: lscr.io/linuxserver/lidarr:latest
+    restart: unless-stopped
+    networks:
+      - trfk_proxy
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      PUID: $PUID
+      PGID: $PGID
+      TZ: $TZ
+    ports:
+      - "8688:8686"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - $DOCKERCONFDIR/lidarr2:/config
+      - $MEDIADIR_ROOT:/mnt/medialibrary
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers Auth Bypass
+      - "traefik.http.routers.lidarr2-rtr-bypass.entrypoints=https"
+      - "traefik.http.routers.lidarr2-rtr-bypass.rule=Host(`lidarr2.$DOMAINNAME`) && (Headers(`X-Api-Key`, `$LIDARR_API_KEY`) || Query(`apikey`, `$LIDARR_API_KEY`))"
+      - "traefik.http.routers.lidarr2-rtr-bypass.priority=100"
+      ## HTTP Routers Auth
+      - "traefik.http.routers.lidarr2-rtr.entrypoints=https"
+      - "traefik.http.routers.lidarr2-rtr.rule=Host(`lidarr2.$DOMAINNAME`)"
+      - "traefik.http.routers.lidarr2-rtr.priority=99"
+      ## Middlewares
+      - "traefik.http.routers.lidarr2-rtr-bypass.middlewares=chain-no-auth@file"
+      # - "traefik.http.routers.lidarr2-rtr.middlewares=chain-authelia@file"
+      - "traefik.http.routers.lidarr2-rtr.middlewares=chain-no-auth@file"
+      ## HTTP Services
+      - "traefik.http.routers.lidarr2-rtr.service=lidarr2-svc"
+      - "traefik.http.routers.lidarr2-rtr-bypass.service=lidarr2-svc"
+      - "traefik.http.services.lidarr2-svc.loadbalancer.server.port=8686"
  
   ###  READARR - eBOOK MANAGEMENT
   readarr:
